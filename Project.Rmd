@@ -1,0 +1,96 @@
+---
+title: "STAT 350 - Project"
+author: "Kevin He"
+date: "11/21/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#loading libraries
+library(tidyverse)
+```
+
+
+# Abstract
+- State something here about the problem
+- State something quick procedures (perform regression analysis with these methods)
+- Briefly Summarize Conclusion
+
+# Introduction
+- Briefly describe the situation of the problem
+- Talk briefly about what we're going to do
+- Research Question: Percent of adults who engage in muscle-strengthening activities on 2 or more days a week by age group
+
+# Data Description
+
+```{r}
+#This section of code loads in the data, deletes columns with extraeous information, and filters the data to Obesity/Weight Status
+
+#loading data
+data <- read.csv("nutrition_data.csv", header = TRUE,na.strings=c("","NA"))
+#Removing Redundant Columns
+summary(data)
+# Delete Location Desc - LocationAbbr is the same column
+# Delete Datasource - All Data comes from the same location
+# Delete Topic - Same information As Class
+# Delete Data_value_Unit & Data_Value_Type - Unit is all NA and All the data is a value of a type
+# Delete Data_Value_Alt - Same information as Data_Value
+# Delete Data_Value_FootNote_Symbol & Data_Value_Footnote - Provides information about missing samples
+# Delete Total - Adds in no information
+# Delete ClassID, TopicID, QUestionID, DataValueTypeID, LocationID, StratificationCategoryID1, StratificationID1
+# Delete Low_Confidence_Limit, High_Confidence_Limit, Sample Size - calulated confidence intervals for each sample size
+
+#Other Notes
+# Both Confidence Limits, Sample Size 
+# Age, Education, Gender, Income, Race has a lot of missing Values
+# Filter Class to Obesity/Weight Status - Physical Activity and Fruits and Vegetables are irrelevent to the data
+# Question TBA
+
+#deleting redundant values
+data <-  data %>% select(-c(LocationAbbr,Datasource, Topic,Data_Value_Unit,Data_Value_Type,Data_Value_Alt, Data_Value_Footnote,Data_Value_Footnote_Symbol, Total, ClassID, TopicID, Data_Value_Unit, QuestionID, DataValueTypeID, LocationID, StratificationCategory1, StratificationCategoryId1, Low_Confidence_Limit, High_Confidence_Limit,Stratification1, StratificationID1, Sample_Size))
+
+#Filtering the Data to focus on A SPECIFIC QUESTION, OVERWEIGHT IS REMOVED
+summary(data$Class)
+data <- data %>% filter(Class == "Physical Activity" & Question == "Percent of adults who engage in muscle-strengthening activities on 2 or more days a week") %>% select(-c(Question, Class))
+data <- droplevels(data)
+
+#Checking for length of study (YearEnd - YearStart) to see if there's studies crossing multiple years
+data %>% filter( YearEnd - YearStart > 0)
+data <- data %>% select(-YearEnd)
+
+head(data)
+```
+
+```{r}
+#data Clensing pt2 -- Focused on Working out 2x a week by group and age
+
+#filtering to view age + filtering null GeoLocation Values
+data <- data %>% filter(!is.na(Age.years.) & !is.na(GeoLocation)) %>% select(-c(Education, Gender, Income, Race.Ethnicity))
+
+#checks if there's any more missing values
+summary(!is.na(data))
+
+
+```
+
+
+```{r}
+#Data Visualization
+
+# State vs Work Out Rate
+data %>% group_by(LocationDesc) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(LocationDesc,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("US State/Territory") + ylab("Workout Rate")
+
+# Age Group vs Work out Rate
+data %>% group_by(Age.years.) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(Age.years.,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Age Grouping") + ylab("Workout Rate")
+
+#Maybe a Facet Wrap here?
+```
+
+
+
+
+
