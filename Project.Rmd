@@ -89,7 +89,15 @@ data %>% group_by(Age.years.) %>% mutate(median_value = median(Data_Value)) %>% 
 
 #Maybe a Facet Wrap here?
 ```
+#Test case
+install.packages("caret")
+library(caret)
 
+#obesity question
+trC.lm <- trainControl(method = "repeatedcv", number = 10, repeats = 5)
+model <- train(Data_Value ~ Age.years., data = data, method = 'lm', trControl = trC.lm)
+model  
+summary(model$finalModel) 
 
 
 
