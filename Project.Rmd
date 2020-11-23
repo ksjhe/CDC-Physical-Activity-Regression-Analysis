@@ -239,4 +239,8 @@ MSPE.test
 # - Test if the intercepts are different from interaction models and without interaction models
 # - Resid Analysis
 # - Add in regsubsets?????
+
+#Testing with an abline
+plot(data.test$Data_Value, mod.lm.age.pred)
+abline(c(0,1))
 ```
