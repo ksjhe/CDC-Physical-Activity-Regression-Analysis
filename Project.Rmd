@@ -51,7 +51,7 @@ summary(data)
 # Question TBA
 
 #deleting redundant values
-data <-  data %>% select(-c(LocationAbbr,Datasource, Topic,Data_Value_Unit,Data_Value_Type,Data_Value_Alt, Data_Value_Footnote,Data_Value_Footnote_Symbol, Total, ClassID, TopicID, Data_Value_Unit, QuestionID, DataValueTypeID, LocationID, StratificationCategory1, StratificationCategoryId1, Low_Confidence_Limit, High_Confidence_Limit,Stratification1, StratificationID1, Sample_Size))
+data <-  data %>% select(-c(LocationAbbr,Datasource, Topic,Data_Value_Unit,Data_Value_Type,Data_Value_Alt, Data_Value_Footnote,Data_Value_Footnote_Symbol, Total, ClassID, TopicID, Data_Value_Unit, QuestionID, DataValueTypeID, LocationID, StratificationCategory1, StratificationCategoryId1,Stratification1, StratificationID1))
 
 #Filtering the Data to focus on A SPECIFIC QUESTION, OVERWEIGHT IS REMOVED
 summary(data$Class)
@@ -81,13 +81,22 @@ summary(!is.na(data))
 ```{r}
 #Data Visualization
 
+# Year vs Work Out Rate
+data %>% group_by(YearStart) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(YearStart,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Year") + ylab("Workout Rate")
+
 # State vs Work Out Rate
 data %>% group_by(LocationDesc) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(LocationDesc,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("US State/Territory") + ylab("Workout Rate")
 
 # Age Group vs Work out Rate
 data %>% group_by(Age.years.) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(Age.years.,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Age Grouping") + ylab("Workout Rate")
 
+# GeoLocations vs Work Out Rate
+data %>% group_by(GeoLocation) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(GeoLocation,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Geo Location") + ylab("Workout Rate")
+
+
 #Maybe a Facet Wrap here?
+#head(data)
+#unique(data$GeoLocation)
 ```
 
 #Test case
