@@ -257,7 +257,6 @@ abline(c(0,1))
 #Analysis
 
 plot(mod.lm$finalModel)
-hist(mod.lm$finalModel$residuals,xlab = "Residuals", color = "grey")
 #Checking assumptions of linear Regression
 #1-Independence of observations is assumed 
 #2-Linearity is satisfied from the given q-q plot
