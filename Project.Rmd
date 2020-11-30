@@ -25,8 +25,12 @@ library(usmap)
 - Briefly Summarize Conclusion
 
 # Introduction
-- Briefly describe the situation of the problem
-- Talk briefly about what we're going to do
+-Obesity has become a growing problem in the United States. We will be investigating the percent of adults who 
+-engage in muscle-strengthening activities on 2 or more days a week by age group by performing a complete 
+-regression analysis of CDC Data: Nutrition, Physical Activity, & Obesity. We will start by data cleaning to 
+-filter the data to Obesity/Weight Status, focusing on working out two times a week by group and age. We will be 
+-selecting a linear regression model using various selection methods such as stepwise and cross validation methods. 
+-We will also conduct full analysis of the selected model to help interpret the results.
 - Research Question: Percent of adults who engage in muscle-strengthening activities on 2 or more days a week by age group
 
 # Data Description
@@ -250,4 +254,35 @@ abline(c(0,1))
 plot(data.test$Data_Value, mod.lm.pred)
 abline(c(0,1))
 ```
+#Analysis
 
+plot(mod.lm$finalModel)
+hist(mod.lm$finalModel$residuals,xlab = "Residuals", color = "grey")
+#Checking assumptions of linear Regression
+#1-Independence of observations is assumed 
+#2-Linearity is satisfied from the given q-q plot
+#3-Normality is confirmed due to distribution of the residual in Histogram
+#4-heteroscedasticity is true since median is centered around 0 and distribution around it is pretty even
+
+summary(mod.lm$finalModel)
+# reject null since p-value is smaller than 0.05 significance
+
+vif(mod.lm$finalModel)
+#VIF values are all below 5 so we know there is no multicolinarity problems in the dataset
+
+plot(mod.lm$finalModel$residuals)
+#confirms constant varience, is in agreement with summary data with median being around 0 and data distributed 
+#equally
+
+# Predicting Y in test dataset(For final model)
+mod.lm.pred <- predict(mod.lm, newdata = data.test)
+# Priting top 6 rows of actual and predited Y values(just for final model)
+pred.mod.lm <- cbind(data.test$Data_Value, mod.lm.pred,)
+head(pred.mod.lm)
+
+# Outliers fix it
+mod.lm$cooksd <- cooks.distance(mod.lm$finalModel)
+mod.lm$cooksd <- ifelse(mod.lm$cooksd < 4/nrow(data), "Not Outlier","Outlier")
+mod.lm$cooksd
+
+#Format the code before submitting  
