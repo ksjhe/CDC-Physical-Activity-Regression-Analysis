@@ -279,9 +279,7 @@ mod.lm.pred <- predict(mod.lm, newdata = data.test)
 pred.mod.lm <- cbind(data.test$Data_Value, mod.lm.pred,)
 head(pred.mod.lm)
 
-# Outliers fix it
+#As we can see there are some outliers but we cant take them out since it would affect the model.
 mod.lm$cooksd <- cooks.distance(mod.lm$finalModel)
 mod.lm$cooksd <- ifelse(mod.lm$cooksd < 4/nrow(data), "Not Outlier","Outlier")
-mod.lm$cooksd
-
-#Format the code before submitting  
+mod.lm$cooksd  
