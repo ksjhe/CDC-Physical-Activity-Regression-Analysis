@@ -24,21 +24,20 @@ library(usmap)
 - Briefly Summarize Conclusion
 
 # Introduction
--Obesity has become a growing problem in the United States. We will be investigating the percent of adults who 
--engage in muscle-strengthening activities on 2 or more days a week by age group by performing a complete 
--regression analysis of CDC Data: Nutrition, Physical Activity, & Obesity. We will start by data cleaning to 
--filter the data to Obesity/Weight Status, focusing on working out two times a week by group and age. We will be 
--selecting a linear regression model using various selection methods such as stepwise and cross validation methods. 
--We will also conduct full analysis of the selected model to help interpret the results.
-- Research Question: Percent of adults who engage in muscle-strengthening activities on 2 or more days a week by age group
 
-# Data Description
+The Centers for Disease Control and Prevention (CDC) recommends that adults need at minimum 150 minutes of aerobic activity and at least 2 days of muscle-strengthening activities per weeks, but only 1 in 4 adults in the United States (US) and 1 in 5 high school students satisfy this recommendation. With obesity being a growing public health issue in the US, it is more than critical that Americans meet these recommendations by the CDC as there are harmful effects associated with not getting enough physical activity. These effects include being at a higher likelihood of developing high blood pressure, high blood cholesterol, type 2 diabetes, heart disease, and cancer; while the benefits vastly improves quality of life with improved sleep, cognitive ability, musculoskeletal health, and a reduced risk of dementia. 
+
+Using nutrition data provided by the CDC, we utilize regression approaches to investigate the relationship between the proportion of Americans that engage in muscle-strengthening activities on 2 or more days by State/District, and age groupings. Since the data is collected from 2011 to 2016, we also investigate if there has been a change in levels of engaging in muscle strengthening exercises over the years. We are interested in what factors contribute to satisfying the muscle-strengthening recommendations, and to see how the different groupings are related.
+
+
+# Data Cleansing
 
 ```{r}
 #This section of code loads in the data, deletes columns with extraeous information, and filters the data to Obesity/Weight Status
 
 #loading data
 data <- read.csv("nutrition_data.csv", header = TRUE,na.strings=c("","NA"))
+min(data$YearEnd)
 #Removing Redundant Columns
 summary(data)
 # Delete Location Desc - LocationAbbr is the same column
@@ -70,13 +69,6 @@ data <- data %>% select(-YearEnd)
 
 #Removes Confidence Interval + Sample Size + Geolocation
 data <- data %>% select(-c("Low_Confidence_Limit","High_Confidence_Limit","Sample_Size", "GeoLocation"))
-data <- droplevels(data)
-
-head(data)
-```
-
-```{r}
-#data Clensing pt2 -- Focused on Working out 2x a week by group and age
 
 #filtering to view age + filtering null GeoLocation Values
 data <- data %>% filter(!as.character(LocationDesc) %in% c("National","Guam","Puerto Rico"), !is.na(Age.years.)) %>% select(-c(Education, Gender, Income, Race.Ethnicity))
@@ -85,35 +77,68 @@ data <- data %>% filter(!as.character(LocationDesc) %in% c("National","Guam","Pu
 summary(!is.na(data))
 data <- droplevels(data)
 
+head(data)
 ```
+The nutrition data is comprised of multiple different surveys results investigating different socio-economic factors and their effects on a multitude of survey questions. The survey is set up so that only one measure of socio-economic status is reported for each survey question. We begin cleaning the data set by removing all redundant variables that contain the same information as another variable, footnotes, confidence intervals, and sample sizes for each survey. Furthermore, we see that there is no difference between the start and the end year of the survey, so we remove the end year. Finally, we filtered the data set to surveys that investigate the proportion of adults who engage in muscle-strengthening activities on 2 or more days a week and narrow our focus to only US States and Districts since not enough data was available from US territories.
+
+
+# Data Description
 
 ```{r}
 #Introducing a new value
-new_point <- data.frame(YearStart = 2011,LocationDesc = factor("California"),Data_Value = 60, Age.years. = factor("18 - 24"))
+data %>% filter(YearStart == 2011, LocationDesc == "Alabama",Age.years. == "18 - 24")
+
+new_point <- data.frame(YearStart = 2011,LocationDesc = factor("Alabama"),Data_Value = 60, Age.years. = factor("18 - 24"))
 data <- rbind(data,new_point)
 
 ```
+Before we begin our exploratory analysis, we introduce the data point (YearStart = 2011, LocationDesc = Alabama, Data_Value = 70, Age.years. = 18 - 24) as an anomaly (PLEASE ADD A LONGER DESCRIPTION HERE)
+
+
+```{r}
+#Data Visualization - Distribution
+data %>% ggplot(aes(x = YearStart)) + geom_bar() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Year") + ylab("Count") + ggtitle("Distribution of Data Collected Each Year")
+
+data %>% ggplot(aes(x = LocationDesc)) + geom_bar() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("US State/District") + ylab("Count") + ggtitle("Distribution of Surveys Conducted in Each State/District")
+
+data %>% ggplot(aes(x = Age.years.)) + geom_bar() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Age Grouping") + ylab("Count") + ggtitle("Distribution of Age Groupings")
+
+data %>% ggplot(aes(x = Data_Value)) + geom_density()+ theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Proportion of Adults That Satisfies CDC Recommendations For Muscle Strengthening Activities") + ylab("Density") + ggtitle("Density of Adults That Satisfies CDC Recommendations")
+
+
+```
+Due to the long name of `proportion of Americans that engage in muscle-strengthening activities on 2 or more days`, we have simplied the name to `Proportion` when performing out exploratory analysis. For this analysis we have identified 3 variables of use: Year, State/District, and age grouping. We first analyse the distribution of each one of these variables, from the above barcharts, it is evident that the surveys are evenly distributed throughout the years, State/District, and age groupings; with the extra data point that we have added, the year 2011, the State of Alabama, and the age grouping `18 - 24` each has one additional point. As well, when looking at the density of the proportion of adults that satisfy CDC recommendations for muscle strengthening activities, it has a large peak that is slightly above 25, and a smaller peak around 43, and is generally right skewed.
 
 ```{r}
 #Data Visualization
 
 # Year vs Work Out Rate
-data %>% group_by(YearStart) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(YearStart,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Year") + ylab("Workout Rate")
-
-# State vs Work Out Rate
-data %>% group_by(LocationDesc) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(LocationDesc,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("US State/Territory") + ylab("Workout Rate")
+data %>% group_by(YearStart) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(YearStart,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Year") + ylab("Proportion") + ggtitle("Proportion of Adults That Satisfy CDC Guidelines vs Year")
 
 # Age Group vs Work out Rate
-data %>% group_by(Age.years.) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = Age.years., y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Age Grouping") + ylab("Workout Rate")
+data %>% group_by(Age.years.) %>%  ggplot(aes(x = Age.years., y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("Age Grouping") + ylab("Proportion") + ggtitle("Proportion of Adults That Satisfy CDC Guidelines vs Age Groupings")
+
+# State vs Work Out Rate
+data %>% group_by(LocationDesc) %>% mutate(median_value = median(Data_Value)) %>% ggplot(aes(x = reorder(LocationDesc,median_value), y = Data_Value)) + geom_boxplot() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + xlab("US State/District") + ylab("Proportion") + ggtitle("Proportion of Adults That Satisfy CDC Guidelines vs US State/District")
 
 # Heatmap of states
 data_temp <- data %>% rename("state" = "LocationDesc")
-plot_usmap(data = data_temp, values = "Data_Value", color = "red", labels = TRUE) + scale_fill_continuous(name = "Work Out Rate", label = scales::comma)
+plot_usmap(data = data_temp, values = "Data_Value", color = "red", labels = TRUE) + scale_fill_continuous(name = "Proportion", label = scales::comma) + ggtitle("Heatmap of Adults that Satisfy CDC Guidelines for Muscle Strengthening Exercise")
 
 #pairs plot for correlation
 pairs(data)
 ```
+We now investigate the relationship between each explanatory variable with the response variable.
 
+We first investigate the change in the proportion of Americans that engage in muscle-strengthening activities on 2 or more days in each year. Each year has a similar IQR with the proportion slightly increasing as the years increase, suggesting a linear relationship. In this boxplot, the added point can be seen as an extreme outlier for the 2011 boxplot, otherwise there exists very few outliers in this boxplot.
+
+When we compare age groupings to proportion of Americans that engage in muscle-strengthening activities on 2 or more days the relationship becomes clear. As we increase the age, there is a clear negative linear trend with the proportion suggesting that younger Americans are more likely to work out in comparison to older Americans. An interesting observation with this boxplot is that there exists more outlier points of American who engage in few muscle-strengthening activities with respects to their age grouping than Americans who engage in more muscle strengthening activities within their age group.
+
+We then compare and see if there is a difference in the proportion of Americans that engage in muscle-strengthening activities on 2 or more days by State. This boxplot is arranged by increasing median proportion and there is clear evidence that the proportions are different by State, as the IQR for West Virginia and Colorado has no overlapping values. West Virginia has the lowest median proportion being just under 20, while Colorado has the highest median value at just over 30. To visualize this clearer on a map, we have also produced a heat map of the proportion by State/District.
+
+Lastly, we look at the pairs plot to check for relationships between each variable. When looking at the plots between explanatory variables there exists no linear relationship as the data appears to be uniform. When comparing each explanatory variable to Data_Value, we see a clear linear relationship with Age.years., a slight linear relationship with Year, and off the plot LocationDesc is harder to interpret, but the data primarily looks randomly distributed.
+
+# Methods
 ```{r}
 # Train/Test Split (80/20)
 
@@ -128,6 +153,9 @@ row.names(data.train) <- NULL
 rownames(data.test) <- NULL
 
 ```
+Before we build the regression models, we first split the data into a 80/20 train/test split for model testing and training.
+
+
 
 ```{r}
 # Hypothesis testing - Model Building
@@ -147,30 +175,41 @@ train.lm.loc <- lm(Data_Value ~  YearStart*LocationDesc + Age.years., data.train
 train.lm.all <- lm(Data_Value ~  YearStart + Age.years. + LocationDesc + YearStart:Age.years. + YearStart:LocationDesc, data.train)
 
 ```
+We are also curious if the slopes of the regression line depends on the different factor levels for the Age Grouping and the State/District. We perform these hypothesis tests below. We train a linear regression model with no interaction terms on the training data, as well as create models with interaction terms on age groupings, State/District, and both age groupings and State/District also using the training data.
+
 
 ```{r}
 #Hypothesis Testing - Importance of Age.years
 anova(train.lm, train.lm.noyears)
 ```
+In our exploratory data analysis, we saw that the proportion slightly grew as the year increased, we first want to test the significance of year given the other explanatory variables are included in the model. Using an ANOVA test to compare the full model with no interaction to the model without year and no interaction we get a p-value < 0.05, which suggests that the year is significant given all other variables are included in the model.
+
+
 
 ```{r}
 #Hypothesis Testing - Interaction on age
 anova(train.lm,train.lm.age)
 
 ```
+We are curious if the slope for each age grouping are equal by adding an interaction term with age grouping and year. We compare this model with the full linear regression model using the ANOVA test. The result of this test provided us with a P-value < 0.05, suggesting that these two models are not the same, and that the interaction term is significant.
+
 
 ```{r}
 #Hypothesis Testing - Interaction on location
 anova(train.lm, train.lm.loc)
 
 ```
+Similar to above, we now want to test if the slopes are the same for US States/Districts by adding an interaction term with State/Districts and year. We compare this model with the full linear regression model using the ANOVA test. The result of this test provided us with a P-value < 0.05, suggesting that these two models are not the same, and that the interaction term is significant.
+
 
 ```{r}
 #Hypothesis Testing - Interaction on All
-anova(train.lm, train.lm.all)
+anova(train.lm.age, train.lm.all)
 
 ```
+The last hypothesis test we perform is to test if the slopes are the same for the model with only the interaction term with age groupings and year and the model with both interactions terms on age grouping & year and State/District & year. Similar to our other hypothesis tests we use an ANOVA test that provides us with a p-value < 0.05, suggesting that the model with both interactions is different than the model with only the one interaction.
 
+From these hypothesis tests, there is significant evidence that the slopes for different levels of the age grouping and State/District are different and we are more inclined to use the model with both interaction terms. 
 
 ```{r}
 # Model Selection - Building Models
@@ -220,22 +259,37 @@ mod.step.loc.r2 <- mod.step.loc$resample[mod.step.loc$resample[,"nvmax"] == mod.
 
 ##MODELS WITH ALL INTERACTION TERMS
 
-#linear Regression - all interaction HAS A COUPLE OF NA'S
+#linear Regression - all interaction
 set.seed(2928893)
 mod.lm.intr <- train(Data_Value ~  YearStart + Age.years. + LocationDesc + YearStart:Age.years. + YearStart:LocationDesc, method = "lm", trControl = control, data.train)
 mod.lm.intr.RMSE <- mod.lm.intr$resample[,"RMSE"]
 mod.lm.intr.r2 <- mod.lm.intr$resample[,"Rsquared"]
 
-#Stepwise regression w/ all interaction - HAS A COUPLE OF NA'S
+#Stepwise regression w/ all interaction
 set.seed(2928893)
 mod.step.intr <- train(Data_Value ~  YearStart + Age.years. + LocationDesc + YearStart:Age.years. + YearStart:LocationDesc, method = "leapSeq", trControl = control, data.train, trace = FALSE, k = log(nrow(data.train)))
 mod.step.intr.RMSE <- mod.step.intr$resample[mod.step.intr$resample[,"nvmax"] == mod.step.intr$bestTune[1,1],"RMSE"]
 mod.step.intr.r2 <- mod.step.intr$resample[mod.step.intr$resample[,"nvmax"] == mod.step.intr$bestTune[1,1],"Rsquared"]
 
 ```
+We now start to build our regression models and start tuning parameters if nessesary. Using the Caret package, for each model we build we perform 10-fold cross validation using our training data. We then save the computed $R^2$ value and the root-MSPE for each fold in each model. 
+
+Although we have completed hypothesis testing to test if interaction terms are nessesary, we still use the models that we have rejected. Specifically we fit the following models:
+
+Linear Model- No Interaction: $y = \beta_0 + \beta_1 x_{year} + \beta_2 x_{State/District} + \beta_3 x_{Age}$
+
+Linear Model - Age Interaction: $y = \beta_0 + \beta_1 x_{year} + \beta_2 x_{State/District} + \beta_3 x_{Age} + \beta_4 x_{Age} x_{year}$
+
+Linear Model - State/District Interaction: $y = \beta_0 + \beta_1 x_{year} + \beta_2 x_{State/District} + \beta_3 x_{Age} + \beta_4 x_{State/District} x_{year}$
+
+Linear Model - Both State/District and Age Interaction: $y = \beta_0 + \beta_1 x_{year} + \beta_2 x_{State/District} + \beta_3 x_{Age} + \beta_4 x_{State/District} x_{year} + \beta_5 x_{Age} x_{year}$
+
+As well, for each one of the models listed above, we also perform stepwise variable selection with parameter tuning from using 10-Fold Cross Validation.
+
+
 
 ```{r}
-#Model Selection - Comparing Models - Models with NA are removed
+#Model Selection - Comparing Models
 
 #Collecting the Errors
 rMSPE <- as.matrix(cbind(mod.lm.RMSE, mod.lm.age.RMSE,mod.lm.loc.RMSE,mod.lm.intr.RMSE, mod.step.RMSE, mod.step.age.RMSE,mod.step.loc.RMSE,mod.step.intr.RMSE))
@@ -248,14 +302,20 @@ mins.MSPE <- apply(rMSPE,1,min)
 mins.r2 <- apply(r2,1,max)
 
 #visualizations
-boxplot(rMSPE, las = 2, main = "root-MSPE from 10-Fold CV")
-boxplot(rMSPE/mins.MSPE, las = 2, main = "Relative-root-MSPE from 10-Fold CV")
-boxplot(r2, las = 2, main = "R2 value from 10-Fold CV")
+boxplot(rMSPE, las = 2, main = "root-MSPE from 10-Fold CV", xlab = "model", ylab = "root-MSPE")
+boxplot(rMSPE/mins.MSPE, las = 2, main = "Relative-root-MSPE from 10-Fold CV",xlab = "model", ylab = "Relative root-MSPE")
+boxplot(r2, las = 2, main = "R2 value from 10-Fold CV", xlab = "model", ylab = "R2")
 
 
 ## All of the LM models perform decently well
 ```
+With the $R^2$ and the root-MSPE saved from the 10-fold cross validation results, we create boxplots to compare the models.
 
+From the first boxplot with the root-MSPE values, it is obvious that none of the stepwise regression models performed as well as the linear regression models. When comparing the linear regression models, the model with both interaction terms has the lowest median value, but as a slightly wider IQR than other linear regression models. The performance of all linear regression models are very similar, but the model with an interaction on age performs slightly better than the others with its slightly lower IQR.
+
+To compare which models performed best in each fold, we create a Relative-root MSPE boxplot by dividing all of the root-MSPE values in each fold by the smallest error in that fold, using this method we're able to easier compare the performance of the models relative to each other. Similar to the MSPE boxplot, all stepwise regression models perform very poorly, while the linear regression model with the interaction term on age performs the best. From this boxplot, we're also able to tell that the linear model with no interactions terms is a close second contender for being the best model with a similar IQR, but a higher median value.
+
+Lastly, we produced boxplots for the $R^2$ value in each fold of each model. Being consistent witht the other plots, the linear regression model with the interaction term on age has the best $R^2$ boxplot with both a high median value and a tight IQR in the model, as well, the linear regression model with no interaction terms followly closely, having a slightly lower median value, but similar IQR.
 
 
 ```{r}
@@ -305,13 +365,22 @@ plot(data.test$Data_Value, mod.lm.intr.pred)
 abline(c(0,1))
 
 ```
+For the last step in model selection, we use the models that we built and tuned and compute its MSPE and $R^2$ on the testing data to see how the model performs with new data. In the previous boxplots, we saw that the linear regression model with no interaction terms and the linear regression model with the interaction term on age performed closely, with the model with the interaction term on age performing slightly better. In the test set, on the other hand the linear regression model with no interaction terms performed the best in terms of both $R^2$ and MSPE values; and since their performance were very similar during cross-validation, we select the linear regression model with no interaction terms based on its performance with the testing data.
 
+#Residual Analysis 
 
+After we have selected our best performing models, we now perform residual analysis to see if our model satisfies the assumptions for regression analysis.
 
 ```{r}
-summary(mod.lm.intr$finalModel)
-# reject null since p-value is smaller than 0.05 significance
+summary(mod.lm$finalModel)
 ```
+We first perform the significance of regression test to see if the response and the regressors are at least linearly related.
+
+$H_o: \beta_0 = \beta_1 = ... = \beta_{57}$
+
+$H_a:$ There exists a $\beta_i \not = 0$
+
+From the summary of the linear model, the p-value for this test is < 0.05, which suggests that there is a linear relationship between at least one of the regressors and the response.
 
 ```{r}
 #Residual Analysis
@@ -323,30 +392,38 @@ plot(mod.lm.intr$finalModel)
 #3-Normality is confirmed due to distribution of the residual in Histogram
 #4-heteroscedasticity is true since median is centered around 0 and distribution around it is pretty even
 ```
+We then plot the residuals and check if they satisfy our assumptions. 
+
+By looking at the Residual vs Fitted plot, all the points are randomly scattered with mean 0 and no clear pattern, which suggests that the constant variance assumption is satisfied.
+
+The Normal Q-Q plot, for the majority follows a straight line behavious with few points around the edges of both extremes deviating from the line. From this observation, the normality of the residuals is satisfied.
+
+For the standardized residuals vs leverage plot, the points for leverage are scattered evenly with a couple of points having high leverage, but since they do not have an standardized residual beyond +/- 3, they are no influential points. As well, there exist a couple points with standardizes residuals beyond +/- 3, but since they do not have a high leverage point, they are no influential.
+
 
 ```{r}
 vif(mod.lm$finalModel)
 #VIF values are all below 5 so we know there is no multicolinarity problems in the dataset
 ```
+To check for multicollinearity issues within the model, we use the Variance Inflation Factor (VIF). The computed VIF for each variable is between (1,2), suggesting that there is not an issue with multicollinearity. 
+
+
 
 ```{r}
-plot(mod.lm.intr$finalModel$residuals)
-#confirms constant varience, is in agreement with summary data with median being around 0 and data distributed 
-#equally
-```
-
-```{r}
-#As we can see there are some outliers but we cant take them out since it would affect the model.
+#Check for influential points
 cooksd <- cooks.distance(mod.lm.intr$finalModel)
 which(cooksd > 1)
 ```
+For the last section of residual analysis we look for possible influential points by using cooks distance and by checking $H_{i,i}$ & studentized residuals.
+
+For Cook's Distance we consider a Cook's Distance > 1 to be influential. We compute Cook's Distance using the cooks.distance() function and checked if any values are > 1, since no values appeared, Cook's Distance suggests that there are no influential points.
 
 ```{r}
 #leverage points
 
 #High H_ii values
 H <- diag(lm.influence(mod.lm.intr$finalModel)$hat)
-mean(H)
+2*p/nrow(data.train)
 
 p <- length(mod.lm.intr$finalModel$coefficients)
 which(H > 2*p/nrow(data.train), arr.ind = TRUE)
@@ -361,11 +438,12 @@ which(abs(student.resid) >= 3)
 
 #data.train[160,]
 ```
+We now check for influential points by using $H_{i,i}$ and studentized residual values. We first compute $\frac{2p}{n}$ and check if it's > 1. Since it is not, we can use the $H_{i,i} > \frac{2p}{n}$ rule of thumb to check for leverage points. The points 331, and 401 are leverage points from this rule of thumb.
 
-```{r}
+For the studentized residuals, we are looking for residuals that are beyond +/- 3. The standardized residuals are computed first and then we check for any points with large residuals. Multiple different points are seen, and they are reported above in the R Script, but since there does are no points with both a high leverage and a large studentized residual, there are no influential points
 
+# Conclusion or something
 
-```
 
 
 
