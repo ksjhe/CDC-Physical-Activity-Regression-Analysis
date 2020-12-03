@@ -411,7 +411,7 @@ To check for multicollinearity issues within the model, we use the Variance Infl
 
 ```{r}
 #Check for influential points
-cooksd <- cooks.distance(mod.lm.intr$finalModel)
+cooksd <- cooks.distance(mod.lm$finalModel)
 which(cooksd > 1)
 ```
 For the last section of residual analysis we look for possible influential points by using cooks distance and by checking $H_{i,i}$ & studentized residuals.
@@ -422,15 +422,17 @@ For Cook's Distance we consider a Cook's Distance > 1 to be influential. We comp
 #leverage points
 
 #High H_ii values
-H <- diag(lm.influence(mod.lm.intr$finalModel)$hat)
+H <- diag(lm.influence(mod.lm$finalModel)$hat)
+p <- length(mod.lm$finalModel$coefficients)
+
 2*p/nrow(data.train)
 
-p <- length(mod.lm.intr$finalModel$coefficients)
+
 which(H > 2*p/nrow(data.train), arr.ind = TRUE)
 
 #Large Residuals
 
-student.resid <- rstudent(mod.lm.intr$finalModel)
+student.resid <- rstudent(mod.lm$finalModel)
 which(abs(student.resid) >= 3)
 
 
@@ -438,7 +440,7 @@ which(abs(student.resid) >= 3)
 
 #data.train[160,]
 ```
-We now check for influential points by using $H_{i,i}$ and studentized residual values. We first compute $\frac{2p}{n}$ and check if it's > 1. Since it is not, we can use the $H_{i,i} > \frac{2p}{n}$ rule of thumb to check for leverage points. The points 331, and 401 are leverage points from this rule of thumb.
+We now check for influential points by using $H_{i,i}$ and studentized residual values. We first compute $\frac{2p}{n}$ and check if it's > 1. Since it is not, we can use the $H_{i,i} > \frac{2p}{n}$ rule of thumb to check for leverage points. No points are identified as high leverage points using this rule of thumb.
 
 For the studentized residuals, we are looking for residuals that are beyond +/- 3. The standardized residuals are computed first and then we check for any points with large residuals. Multiple different points are seen, and they are reported above in the R Script, but since there does are no points with both a high leverage and a large studentized residual, there are no influential points
 
