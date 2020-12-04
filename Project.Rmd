@@ -25,9 +25,11 @@ library(usmap)
 
 # Introduction
 
-The Centers for Disease Control and Prevention (CDC) recommends that adults need at minimum 150 minutes of aerobic activity and at least 2 days of muscle-strengthening activities per weeks, but only 1 in 4 adults in the United States (US) and 1 in 5 high school students satisfy this recommendation. With obesity being a growing public health issue in the US, it is more than critical that Americans meet these recommendations by the CDC as there are harmful effects associated with not getting enough physical activity. These effects include being at a higher likelihood of developing high blood pressure, high blood cholesterol, type 2 diabetes, heart disease, and cancer; while the benefits vastly improves quality of life with improved sleep, cognitive ability, musculoskeletal health, and a reduced risk of dementia. 
+The Centers for Disease Control and Prevention (CDC) recommends that adults need at minimum 150 minutes of aerobic activity and at least two days of muscle-strengthening activities per week, but only 1 in 4 adults in the United States (US) and 1 in 5 high school students satisfy this recommendation. With obesity being a growing public health issue in the US, it is more than critical that Americans meet these recommendations by the CDC as there are harmful effects associated with not getting enough physical activity. These effects include being at a higher likelihood of developing high blood pressure, high blood cholesterol, type 2 diabetes, heart disease, and cancer, while the benefits vastly improve quality of life with improved sleep, cognitive ability, musculoskeletal health, and a reduced risk of dementia. 
 
-Using nutrition data provided by the CDC, we utilize regression approaches to investigate the relationship between the proportion of Americans that engage in muscle-strengthening activities on 2 or more days by State/District, and age groupings. Since the data is collected from 2011 to 2016, we also investigate if there has been a change in levels of engaging in muscle strengthening exercises over the years. We are interested in what factors contribute to satisfying the muscle-strengthening recommendations, and to see how the different groupings are related.
+Here our target and study population are the adults who engage in muscle-strengthening activities two or more days a week. We're assuming independence for the data collected by the CDC.
+
+Using nutrition data provided by the CDC, we utilize regression approaches to investigate the relationship between the proportion of Americans that engage in muscle-strengthening activities on two or more days by State, and age groupings. Since the data is collected from 2011 to 2016, we also check if there has been a change in levels of engaging in muscle strengthening exercises over the years. We are interested in what factors contribute to satisfying the muscle-strengthening requirements, and to see how the different groupings are related.
 
 
 # Data Cleansing
@@ -79,7 +81,7 @@ data <- droplevels(data)
 
 head(data)
 ```
-The nutrition data is comprised of multiple different surveys results investigating different socio-economic factors and their effects on a multitude of survey questions. The survey is set up so that only one measure of socio-economic status is reported for each survey question. We begin cleaning the data set by removing all redundant variables that contain the same information as another variable, footnotes, confidence intervals, and sample sizes for each survey. Furthermore, we see that there is no difference between the start and the end year of the survey, so we remove the end year. Finally, we filtered the data set to surveys that investigate the proportion of adults who engage in muscle-strengthening activities on 2 or more days a week and narrow our focus to only US States and Districts since not enough data was available from US territories.
+The nutrition data consists of multiple different survey results investigating the different socio-economic factors and their effects on a multitude of survey questions. The survey is set up so that only one measure of socio-economic status is recorded for each survey question. We begin cleaning the data set by removing all redundant variables that contain the same information as another variable, footnotes, confidence intervals, and sample sizes for each survey. Furthermore, we see that there is no difference between the start and the end year of the survey, so we remove the end year. Finally, we filter the data set to surveys that investigate the proportion of adults who engage in muscle-strengthening activities on two or more days a week and narrow our focus to the only US States and Districts since not enough data was available from US territories.
 
 
 # Data Description
@@ -107,7 +109,9 @@ data %>% ggplot(aes(x = Data_Value)) + geom_density()+ theme(axis.text.x = eleme
 
 
 ```
-Due to the long name of `proportion of Americans that engage in muscle-strengthening activities on 2 or more days`, we have simplied the name to `Proportion` when performing out exploratory analysis. For this analysis we have identified 3 variables of use: Year, State/District, and age grouping. We first analyse the distribution of each one of these variables, from the above barcharts, it is evident that the surveys are evenly distributed throughout the years, State/District, and age groupings; with the extra data point that we have added, the year 2011, the State of Alabama, and the age grouping `18 - 24` each has one additional point. As well, when looking at the density of the proportion of adults that satisfy CDC recommendations for muscle strengthening activities, it has a large peak that is slightly above 25, and a smaller peak around 43, and is generally right skewed.
+The data we have chosen for our different models are location, various age groups and the year data collection began these are just the explanatory variables. The response variable here is Data_Value which is the proportion of adults who engage in muscle-strengthening activities for two or more days. 
+
+Due to the long name of `proportion of Americans that engage in muscle-strengthening activities on two or more days,` we have simplified the name to `Proportion` when performing out exploratory analysis. For this analysis, we have identified three variables of use: Year, State/District, and age grouping. We start with analyzing the distribution of each one of these variables, from the above bar charts, it is clear that the surveys are evenly distributed throughout the years, State/District, and age groupings; with the extra data point that we have added, the year 2011, the State of Alabama, and the age grouping `18 - 24` each has one additional point. As well, when looking at the density of the proportion of adults that satisfy CDC recommendations for muscle-strengthening activities, it has a large peak that is slightly above 25, and a smaller spike around 43, and is generally right-skewed.
 
 ```{r}
 #Data Visualization
@@ -141,7 +145,7 @@ Lastly, we look at the pairs plot to check for relationships between each variab
 # Methods
 ```{r}
 # Train/Test Split (80/20)
-
+head(data)
 set.seed(2928893)
 test.size <- floor(0.8 * nrow(data))
 train_ind <- sample(seq_len(nrow(data)), size = test.size)
