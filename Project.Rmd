@@ -128,15 +128,15 @@ plot_usmap(data = data_temp, values = "Data_Value", color = "red", labels = TRUE
 #pairs plot for correlation
 pairs(data)
 ```
-We now investigate the relationship between each explanatory variable with the response variable.
+We now investigate the relationship between each explanatory variable with the response variable, meaning we would able to explain the variability of the response variable using the explanatory variable.
 
-We first investigate the change in the proportion of Americans that engage in muscle-strengthening activities on 2 or more days in each year. Each year has a similar IQR with the proportion slightly increasing as the years increase, suggesting a linear relationship. In this boxplot, the added point can be seen as an extreme outlier for the 2011 boxplot, otherwise there exists very few outliers in this boxplot.
+We start by exploring the change in the proportion of Americans that engage in muscle-strengthening activities for two or more days in a year. Each year has a similar IQR with the distribution slightly increasing as the years advance, which implies a linear relationship. In this boxplot, the new point is an extreme outlier for the 2011 boxplot, otherwise, there exist very few outliers in this boxplot.
 
-When we compare age groupings to proportion of Americans that engage in muscle-strengthening activities on 2 or more days the relationship becomes clear. As we increase the age, there is a clear negative linear trend with the proportion suggesting that younger Americans are more likely to work out in comparison to older Americans. An interesting observation with this boxplot is that there exists more outlier points of American who engage in few muscle-strengthening activities with respects to their age grouping than Americans who engage in more muscle strengthening activities within their age group.
+When we compare age groupings to the proportion of Americans that engage in muscle-strengthening activities on two or more day's the relationship becomes clear. As age increases, we see a  negative linear relationship showing that younger Americans are more likely to work out in comparison to older Americans. An interesting observation with this boxplot is that there exist more outlier points of Americans who engage in fewer muscle-strengthening activities corresponding to their age grouping than Americans who engage in more muscle-strengthening activities within their age group.
 
-We then compare and see if there is a difference in the proportion of Americans that engage in muscle-strengthening activities on 2 or more days by State. This boxplot is arranged by increasing median proportion and there is clear evidence that the proportions are different by State, as the IQR for West Virginia and Colorado has no overlapping values. West Virginia has the lowest median proportion being just under 20, while Colorado has the highest median value at just over 30. To visualize this clearer on a map, we have also produced a heat map of the proportion by State/District.
+We compare to see if there is a difference in the proportion of Americans that engage in muscle-strengthening activities on two or more days by State. This boxplot is arranged by increasing medians and there is clear evidence that the proportions are different by State, as the IQR for West Virginia and Colorado has no overlapping values. West Virginia has the lowest median proportion being just under 20, while Colorado has the highest median value over 30. To visualize this clearer on a map, we have also produced a heat map of the proportion by State/District.
 
-Lastly, we look at the pairs plot to check for relationships between each variable. When looking at the plots between explanatory variables there exists no linear relationship as the data appears to be uniform. When comparing each explanatory variable to Data_Value, we see a clear linear relationship with Age.years., a slight linear relationship with Year, and off the plot LocationDesc is harder to interpret, but the data primarily looks randomly distributed.
+Lastly, we look at the pairs plot to check for relationships between each variable. When looking at the layout between explanatory variables there isn't a linear relationship as the data appears to be uniform. When comparing each explanatory variable to Data_Value, we see a clear linear relationship with Age.years., a slight linear relationship with Year, and of the plot, LocationDesc is harder to interpret, but the data primarily looks randomly distributed.
 
 # Methods
 ```{r}
@@ -372,6 +372,7 @@ For the last step in model selection, we use the models that we built and tuned 
 After we have selected our best performing models, we now perform residual analysis to see if our model satisfies the assumptions for regression analysis.
 
 ```{r}
+AIC(mod.lm$finalModel, mod.lm.age$finalModel, mod.lm.intr$finalModel, mod.lm.loc$finalModel)
 summary(mod.lm$finalModel)
 ```
 We first perform the significance of regression test to see if the response and the regressors are at least linearly related.
