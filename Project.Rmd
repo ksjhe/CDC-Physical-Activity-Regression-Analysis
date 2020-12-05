@@ -179,7 +179,7 @@ train.lm.loc <- lm(Data_Value ~  YearStart*LocationDesc + Age.years., data.train
 train.lm.all <- lm(Data_Value ~  YearStart + Age.years. + LocationDesc + YearStart:Age.years. + YearStart:LocationDesc, data.train)
 
 ```
-We are also curious if the slopes of the regression line depends on the different factor levels for the Age Grouping and the State/District. We perform these hypothesis tests below. We train a linear regression model with no interaction terms on the training data, as well as create models with interaction terms on age groupings, State/District, and both age groupings and State/District also using the training data.
+We are also curious if the slopes of the regression line depend on the different factor levels for the Age Grouping and the State/District. We perform these hypothesis tests below. We train a linear regression model with no interaction terms on the training data, as well as create models with interaction terms on age groupings, State/District, and both age groupings and State/District also using the training data.
 
 
 ```{r}
@@ -195,7 +195,7 @@ In our exploratory data analysis, we saw that the proportion slightly grew as th
 anova(train.lm,train.lm.age)
 
 ```
-We are curious if the slope for each age grouping are equal by adding an interaction term with age grouping and year. We compare this model with the full linear regression model using the ANOVA test. The result of this test provided us with a P-value < 0.05, suggesting that these two models are not the same, and that the interaction term is significant.
+We are curious if the slope for each age grouping is equal by adding an interaction term with age grouping and year. We compare this model with the full linear regression model using the ANOVA test. The result of this test provided us with a P-value < 0.05, suggesting that these two models are not the same and that the interaction term is significant.
 
 
 ```{r}
@@ -203,7 +203,7 @@ We are curious if the slope for each age grouping are equal by adding an interac
 anova(train.lm, train.lm.loc)
 
 ```
-Similar to above, we now want to test if the slopes are the same for US States/Districts by adding an interaction term with State/Districts and year. We compare this model with the full linear regression model using the ANOVA test. The result of this test provided us with a P-value < 0.05, suggesting that these two models are not the same, and that the interaction term is significant.
+Similar to above, we now want to test if the slopes are the same for US States/Districts by adding an interaction term with State/Districts and year. We compare this model with the full linear regression model using the ANOVA test. The result of this test provided us with a P-value < 0.05, suggesting that these two models are not the same and that the interaction term is significant.
 
 
 ```{r}
@@ -211,7 +211,7 @@ Similar to above, we now want to test if the slopes are the same for US States/D
 anova(train.lm.age, train.lm.all)
 
 ```
-The last hypothesis test we perform is to test if the slopes are the same for the model with only the interaction term with age groupings and year and the model with both interactions terms on age grouping & year and State/District & year. Similar to our other hypothesis tests we use an ANOVA test that provides us with a p-value < 0.05, suggesting that the model with both interactions is different than the model with only the one interaction.
+The last hypothesis test we perform is to test if the slopes are the same for the model with only the interaction term with age groupings and year and the model with both interaction terms on age grouping & year and State/District & year. Similar to the other hypothesis tests we use an ANOVA test that provides us with a p-value < 0.05, suggesting that the model with both interactions is different than the model with only one interaction.
 
 From these hypothesis tests, there is significant evidence that the slopes for different levels of the age grouping and State/District are different and we are more inclined to use the model with both interaction terms. 
 
@@ -276,7 +276,7 @@ mod.step.intr.RMSE <- mod.step.intr$resample[mod.step.intr$resample[,"nvmax"] ==
 mod.step.intr.r2 <- mod.step.intr$resample[mod.step.intr$resample[,"nvmax"] == mod.step.intr$bestTune[1,1],"Rsquared"]
 
 ```
-We now start to build our regression models and start tuning parameters if nessesary. Using the Caret package, for each model we build we perform 10-fold cross validation using our training data. We then save the computed $R^2$ value and the root-MSPE for each fold in each model. 
+We now start to build our regression models and start tuning parameters if necessary. Using the Caret package, for each model we make we perform 10-fold cross-validation using our training data. We then save the computed $R^2$ value and the root-MSPE for each fold in each model. 
 
 Although we have completed hypothesis testing to test if interaction terms are nessesary, we still use the models that we have rejected. Specifically we fit the following models:
 
@@ -313,13 +313,13 @@ boxplot(r2, las = 2, main = "R2 value from 10-Fold CV", xlab = "model", ylab = "
 
 ## All of the LM models perform decently well
 ```
-With the $R^2$ and the root-MSPE saved from the 10-fold cross validation results, we create boxplots to compare the models.
+With the $R^2$ and the root-MSPE saved from the 10-fold cross-validation results, we create boxplots to compare the models.
 
-From the first boxplot with the root-MSPE values, it is obvious that none of the stepwise regression models performed as well as the linear regression models. When comparing the linear regression models, the model with both interaction terms has the lowest median value, but as a slightly wider IQR than other linear regression models. The performance of all linear regression models are very similar, but the model with an interaction on age performs slightly better than the others with its slightly lower IQR.
+From the first boxplot with the root-MSPE values, it's evident that none of the stepwise regression models performed as well as the linear regression models. When comparing the linear regression models, the model with both interaction terms has the lowest median but has a slightly wider IQR than other linear regression models. The performance of all linear regression models are very similar, but the model with interaction on age performs marginally better than the others with its slightly lower IQR.
 
-To compare which models performed best in each fold, we create a Relative-root MSPE boxplot by dividing all of the root-MSPE values in each fold by the smallest error in that fold, using this method we're able to easier compare the performance of the models relative to each other. Similar to the MSPE boxplot, all stepwise regression models perform very poorly, while the linear regression model with the interaction term on age performs the best. From this boxplot, we're also able to tell that the linear model with no interactions terms is a close second contender for being the best model with a similar IQR, but a higher median value.
+To compare which models performed best in each fold, we create a Relative-root MSPE boxplot by dividing all of the root-MSPE values in each fold by the smallest error in that fold, using this method we're able to easily compare the performance of the models relative to each other. Similar to the MSPE boxplot, all stepwise regression models perform very poorly, while the linear regression model with the interaction term on age performs the best. From this boxplot, we're also able to tell that the linear model with no interaction terms is a close second contender for being the best model with a similar IQR with a higher median.
 
-Lastly, we produced boxplots for the $R^2$ value in each fold of each model. Being consistent witht the other plots, the linear regression model with the interaction term on age has the best $R^2$ boxplot with both a high median value and a tight IQR in the model, as well, the linear regression model with no interaction terms followly closely, having a slightly lower median value, but similar IQR.
+Lastly, we produced boxplots for the $R^2$ value in each fold of all models. Being consistent with the other plots, the linear regression model with the interaction term on age has the best $R^2$ boxplot with both a high median and a tight IQR in the model, as well, the linear regression model with no interaction terms follow closely, having a slightly lower median but similar IQR.
 
 
 ```{r}
@@ -369,7 +369,7 @@ plot(data.test$Data_Value, mod.lm.intr.pred)
 abline(c(0,1))
 
 ```
-For the last step in model selection, we use the models that we built and tuned and compute its MSPE and $R^2$ on the testing data to see how the model performs with new data. In the previous boxplots, we saw that the linear regression model with no interaction terms and the linear regression model with the interaction term on age performed closely, with the model with the interaction term on age performing slightly better. In the test set, on the other hand the linear regression model with no interaction terms performed the best in terms of both $R^2$ and MSPE values; and since their performance were very similar during cross-validation, we select the linear regression model with no interaction terms based on its performance with the testing data.
+For the last step in model selection, we use the models that we built and tuned and compute its MSPE and $R^2$ on the testing data to see how the model performs with new data. In the previous boxplots, we saw that the linear regression model with no interaction terms and the linear regression model with the interaction term on age performed closely, with the model with the interaction term on age performing slightly better. In the test set, on the other hand, the linear regression model with no interaction terms performed the best in terms of both $R^2$ and MSPE values; and since their performance was very similar during cross-validation, we select the linear regression model with no interaction terms based on its performance with the testing data.
 
 #Residual Analysis 
 
@@ -399,11 +399,11 @@ plot(mod.lm.intr$finalModel)
 ```
 We then plot the residuals and check if they satisfy our assumptions. 
 
-By looking at the Residual vs Fitted plot, all the points are randomly scattered with mean 0 and no clear pattern, which suggests that the constant variance assumption is satisfied.
+By looking at the Residual vs Fitted plot, all the points are randomly scattered with a mean of 0 and no clear pattern, which suggests that the constant variance assumption is satisfied.
 
-The Normal Q-Q plot, for the majority follows a straight line behavious with few points around the edges of both extremes deviating from the line. From this observation, the normality of the residuals is satisfied.
+The Normal Q-Q plot, for the majority, follows a straight line with few points around the edges of both extremes deviating from the line. From this observation, the normality of the residuals is satisfied.
 
-For the standardized residuals vs leverage plot, the points for leverage are scattered evenly with a couple of points having high leverage, but since they do not have an standardized residual beyond +/- 3, they are no influential points. As well, there exist a couple points with standardizes residuals beyond +/- 3, but since they do not have a high leverage point, they are no influential.
+For the standardized residuals vs leverage plot, the points for leverage are scattered evenly with a couple of points having high leverage, but since they do not have a standardized residual beyond +/- 3, they are no influential points. As well, there exist a couple of points with standardized residuals beyond +/- 3, but since they do not have a high leverage point, they are no influential.
 
 
 ```{r}
@@ -419,10 +419,9 @@ To check for multicollinearity issues within the model, we use the Variance Infl
 cooksd <- cooks.distance(mod.lm$finalModel)
 which(cooksd > 1)
 ```
-For the last section of residual analysis we look for possible influential points by using cooks distance and by checking $H_{i,i}$ & studentized residuals.
+For the last section of the residual analysis, we look for possible influential points by using cooks distance and by checking $H_{i, i}$ & studentized residuals.
 
-For Cook's Distance we consider a Cook's Distance > 1 to be influential. We compute Cook's Distance using the cooks.distance() function and checked if any values are > 1, since no values appeared, Cook's Distance suggests that there are no influential points.
-
+For Cook's Distance, we consider a Cook's Distance > 1 to be influential. We compute Cook's Distance using the cooks.distance() function and check if any values are > 1, since no values appeared, Cook's Distance suggests that there are no influential points.
 ```{r}
 #leverage points
 
@@ -445,9 +444,9 @@ which(abs(student.resid) >= 3)
 
 #data.train[160,]
 ```
-We now check for influential points by using $H_{i,i}$ and studentized residual values. We first compute $\frac{2p}{n}$ and check if it's > 1. Since it is not, we can use the $H_{i,i} > \frac{2p}{n}$ rule of thumb to check for leverage points. No points are identified as high leverage points using this rule of thumb.
+We now check for influential points by using $H_{i, i}$ and studentized residual. We first compute $\frac{2p}{n}$ and check if it's > 1. Since it's not, we can use the $H_{i,i} > \frac{2p}{n}$ rule of thumb to check for leverage points. No points are identified as high leverage points using this rule of thumb.
 
-For the studentized residuals, we are looking for residuals that are beyond +/- 3. The standardized residuals are computed first and then we check for any points with large residuals. Multiple different points are seen, and they are reported above in the R Script, but since there does are no points with both a high leverage and a large studentized residual, there are no influential points
+For the studentized residuals, we look for residuals that are beyond +/- 3. The standardized residuals are first calculated then we check for any points with large residuals. Multiple different points are seen, and they are reported above in the R Script, but since there are no points with both high leverage and a large studentized residual, there are no influential points.
 
 # Conclusion or something
 
