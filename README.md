@@ -1,10 +1,11 @@
-# Analysis of American CDC Guidelines (REANAME ME LATER)
+# Regression Analysis of CDC Guidelines on Muscle strengthening Activity
 
 ## Table of Contents
  - Add links later on github
 
 ## Abstract
-- Summary of Results Here
+Adult obesity has been a long and growing issue in the United States with some calling it an "obesity epidemic". The US Centers for Disease Control and Prevention publishes guidelines on both the amount of moderate intensive activities and muscle strengthening activities required for adults to mitigate the risks associated with obesity. In this analysis, we investigate the effects of year, State/District of residence, and age on the proportion of adults that satisfy CDC guidelines on muscle strengthening activity. We performed an exploratory analysis to visualize the distribution of the data, conducted modelling using ordinary least squares and stepwise regression with 10-fold cross validation for model selection, and carried out residual analysis. A model was developed that explained 88% of the variability, and all three factors of interest were shown to be statistically significant to the proportion of adults that satisfy CDC guidelines on muscle strengthening activity.
+
 
 ## Introduction
 
@@ -114,7 +115,7 @@ Finally, we see how each model performs on new data, specifically our test data 
 |Stepwise Regression - LocationDesc interaction |  27.18744  |
 |Stepwise Regression - Age group and LocationDesc interaction |27.18744 |
 
-As expected from the cross validation results, the linear regression model with no interaction terms performs the best with the linear regression model with no interactions being close behind. This result contracts the results of our hypothesis tests to see if the slopes depended on the different levels of LocationDesc and Age.years. , but is backed up by our original model comparison using AIC as it has one of the top AIC values in comparison to the other models. This discrepancy could be explained by the bias-variance trade off as model with more interaction terms decreases the bias, but in turn makes the model more variable.
+As expected from the cross validation results, the linear regression model with no interaction terms performs the best with the linear regression model with no interactions being close behind. This result contracts the results of our hypothesis tests to see if the slopes depended on the different levels of LocationDesc and Age.years. , but is backed up by our original model comparison using AIC as it has one of the top AIC values in comparison to the other models. This discrepancy could be explained by the bias-variance trade off as although we have 735 data points, we also have 51 levels in the LocationDesc variable and 6 levels in the Age.years. variable so in actuality, when we create interaction terms we have to estimate the coefficients for 306 additional variables, which decreases the bias of the model as we have a more flexible model, but in turn our variance increases, making our models more variable.
 
 From both cross validation and the testing data we select the linear regression model with interaction on age groups to be our best model. We include a plot of the predicted vs observed value from our final model.
 
@@ -135,13 +136,21 @@ We now perform analysis on the residuals.
 
 The Normal Q-Q plot, for the majority, follows a straight line with few points around the edges of both extremes deviating from the line. From this observation, the normality of the residuals is satisfied.
 
-For the standardized residuals vs leverage plot, the points for leverage are scattered evenly around the same area with no points having a large leverage. As well, there exist a couple of points with standardized residuals beyond +/- 3, but since they do not have a high leverage point, they are not influential.
+For the standardized residuals vs leverage plot, the points for leverage are scattered evenly around the same area with no points having a large leverage. As well, there exist a couple of points with standardized residuals beyond +/- 3, but since they do not have a high leverage point, they are not considered to be influential.
 
-To double check that we do not have any influential points we use both Cook's Distance and diag(H) with Standardizes residuals, of which no influential points were identified.
+To double check that we do not have any influential points we use both Cook's Distance and diag(H) with standardized residuals, of which no influential points were identified.
 
 Lastly, we use the Variance Inflation Factor to see if there exists an issue with multicollinearity in the model, and since all the values are ~ 1, we conclude that there is no issues with multicollinearity.
 
 ## Conclusion
+  Overall, our final model has an R^2 value of 0.8891376 which is a great performance given the number of variables that were filtered from the data set. Running one last summary on our chosen model we are able to answer the questions posed in the beginning of the analysis. We first see that as the year increases there has been an improvement in the proportion of US adults that satisfies CDC guideline on muscle strengthening activity, although this change is quite marginal with a 0.38% increase per year from 2013 to 2015; this variable also poses as a limitation in our model which will be discussed later on. As well, we can see from the model that younger age groups are more likely to satisfy CDC guidelines on muscle strengthening activity, with about a 3% difference in proportion as age increases. Finally, we are able to conclude that the likelihood of satisfying CDC guidelines on muscle strengthening activities depends on the State/District of residence with states such as Hawaii, Alaska, Virginia, and Colorado having some of the largest increases for the intercept of the model, which is consistent with our exploratory analysis.
+
+  Some of the limitations of the model include having the YearStart as one of the variables in our model as we do not know if the upwards trend will continuously be linear or if the increase will slow down as time goes on, forcing us to extrapolate for predictions outside of the year range 2013 - 2015. Moreover, including 51 levels of State/District and 6 levels of Age groups impacts our model as we have to fit a coefficient for each level which increases model complexity. In future studies, States/District could be grouped into 9 census regions or into Democratic and Republican controlled States/District to reduce their model complexity and to investigate further questions related to the data.
+
+## References
+- [Physical Activit Recommendations for Different Age Groups - CDC](https://www.cdc.gov/physicalactivity/basics/age-chart.html)
+- [Lack of Physical Activity - CDC](https://www.cdc.gov/chronicdisease/resources/publications/factsheets/physical-activity.htm)
+- [Physical Activity - CDC](https://www.cdc.gov/physicalactivity/basics/adults/index.htm#:~:text=Physical%20activities%20to%20strengthen%20your,addition%20to%20your%20aerobic%20activity.)
 
 ## Appendix
-- Link github code here
+For the full code and analysis on this project [click here](https://github.com/kaishuun/Work-Out-Analysis/blob/main/Project.Rmd). For reproducibility purposes the seed `2928820` is set before any stochastic processes began.
