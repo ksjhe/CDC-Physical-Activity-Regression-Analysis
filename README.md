@@ -1,7 +1,23 @@
 # Regression Analysis of CDC Guidelines on Muscle strengthening Activity
 
 ## Table of Contents
- - Add links later on github
+ - [Abstract](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#abstract)
+ - [Introduction](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#introduction)
+ - [Data Cleaning and Description](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#data-cleaning--description)
+  - [Data Cleaning](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#data-cleaning)
+  - [Data Distribution](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#data-distribution)
+  - [Exploratory Analysis](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#exploratory-analysis)
+ - [Methods](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#methods)
+  - [Hypothesis Testing and Model Comparision](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#hypothesis-testing-and-model-comparison)
+  - [Model Building](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#model-building)
+ -[Results](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#results)
+  -[Cross Validation and Test Data Results](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#cross-validation-and-test-data-results)
+  -[Residual Analysis](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#residual-analysis)
+ - [Conclusion](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#conclusion)
+ - [References](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#references)
+ - [Appendix](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#appendix)
+  
+ 
 
 ## Abstract
 Adult obesity has been a long and growing issue in the United States with some calling it an "obesity epidemic". The US Centers for Disease Control and Prevention publishes guidelines on both the amount of moderate intensive activities and muscle strengthening activities required for adults to mitigate the risks associated with obesity. In this analysis, we investigate the effects of year, State/District of residence, and age on the proportion of adults that satisfy CDC guidelines on muscle strengthening activity. We performed an exploratory analysis to visualize the distribution of the data, conducted modelling using ordinary least squares and stepwise regression with 10-fold cross validation for model selection, and carried out residual analysis. A model was developed that explained 88% of the variability, and all three factors of interest were shown to be statistically significant to the proportion of adults that satisfy CDC guidelines on muscle strengthening activity.
