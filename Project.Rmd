@@ -334,7 +334,7 @@ MSPE.test
 r2.test <- calculateR2(pred, data.test)
 r2.test
 #Testing with an abline
-plot(data.test$Data_Value, mod.lm.pred, xlab = "Observed Value", ylab = "predicted Value", main = "Predicted vs Observed Value")
+plot(data.test$Data_Value, mod.lm.pred, xlab = "Observed Value", ylab = "Predicted Value", main = "Predicted vs Observed Value")
 abline(c(0,1))
 
 ```
