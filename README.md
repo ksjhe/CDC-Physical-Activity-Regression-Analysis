@@ -1,4 +1,4 @@
-# Regression Analysis of CDC Guidelines on Muscle strengthening Activity
+# Regression Analysis of CDC Guidelines on muscle-strengthening Activity
 
 ## Table of Contents
  - [Abstract](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#abstract)
@@ -11,7 +11,7 @@
      - [Hypothesis Testing and Model Comparision](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#hypothesis-testing-and-model-comparison)
      - [Model Building](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#model-building)
  - [Results](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#results)
-     - [Cross Validation and Test Data Results](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#cross-validation-and-test-data-results)
+     - [Cross Validation and Test Data](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#cross-validation-and-test-data)
      - [Residual Analysis](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#residual-analysis)
  - [Conclusion](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#conclusion)
  - [References](https://github.com/kaishuun/CDC-Physical-Activity-Regression-Analysis#references)
@@ -25,25 +25,25 @@ Adult obesity has been a long and growing issue in the United States with some c
 
 ## Introduction
 
-The Centers for Disease Control and Prevention (CDC) in the United States recommends that adults need at minimum 150 minutes of aerobic activity and at least two days of muscle-strengthening activities per week, but only 1 in 4 adults in the United States (US) and 1 in 5 high school students satisfy this recommendation. With obesity being a growing public health issue in the US, it is more than critical that Americans meet these recommendations by the CDC as there are harmful effects associated with not getting enough physical activity. These effects include being at a higher likelihood of developing high blood pressure, high blood cholesterol, type 2 diabetes, heart disease, and cancer, while the benefits vastly improve quality of life with improved sleep, cognitive ability, musculoskeletal health, and a reduced risk of dementia.
+The Centers for Disease Control and Prevention (CDC) in the United States recommends that adults need at minimum 150 minutes of aerobic activity and at least two days of muscle-strengthening activities per week, but only 1 in 4 adults in the United States (US) and 1 in 5 high school students satisfy this recommendation. With obesity being a growing public health issue in the US, it is more than critical that Americans meet these recommendations by the CDC as there are harmful effects associated with not getting enough physical activity. These effects include being at a higher likelihood of developing high blood pressure, high blood cholesterol, type 2 diabetes, heart disease, and cancer; while the benefits vastly improve quality of life with improved sleep, cognitive ability, musculoskeletal health, and a reduced risk of dementia.
 
-Using nutrition data provided by the CDC, our study population are adults over the age of 18, and we are assuming independence for the collected data. We utilize regression approaches to investigate the relationship between the proportion of adults that satisfies CDC guidelines on muscle-strengthening activity by the State/District that they reside and their age. Due to the long name of `proportion of adults that satisfies CDC guidelines on muscle-strengthening activity`, in our plots, we refer to this study question simply as `proportion`. Since the data is collected for this subject is only collected in 2011,2013, and 2015, we are also interested to see if there has been a change in proportions of adults engaging in muscle-strengthening activities over the years. In this study, we will investigate and determine what factors contribute to satisfying the muscle-strengthening requirements by the CDC, and see how the different variables are related.
+Using the nutrition data provided by the CDC, our study population are adults over the age of 18, and we are assuming independence for the collected data. We utilize regression approaches to investigate the relationship between the proportion of adults that satisfies CDC guidelines on muscle-strengthening activity by the State/District that they reside, their age, and year. Due to the long name of `proportion of adults that satisfies CDC guidelines on muscle-strengthening activity`, in our plots, we refer to this study question simply as `proportion`. Since the data collected for this study only include the years 2011,2013, and 2015, we are also interested to see if there has been a change in proportions of adults engaging in muscle-strengthening activities over the years. In this study, we will investigate and determine what factors contribute to satisfying the muscle-strengthening guidelines by the CDC, and see how the different variables are related.
 
 ## Data Cleaning & Description
 
 #### Data Cleaning
-The nutrition data consists of multiple different survey results investigating the different socio-economic factors and their effects on a multitude of survey questions. The survey is set up so that only one measure of socio-economic status is recorded for each survey question.
+The nutrition data consists of multiple different survey results investigating the different socio-economic factors and their effects on a multitude of survey questions. The survey is set up so that only one measure of socio-economic status is recorded for each question.
 
-We begin cleaning the data set by removing all redundant variables that contain the same information as another variable, footnotes, confidence intervals, and sample sizes for each survey. Furthermore, we see that there is no difference between the start and the end year of the survey, so we remove the end year. Finally, we filter the data set to surveys that include our question of interest: the proportion of adults who engage in muscle-strengthening activities on two or more days a week. As well, we narrow our focus to only US States and Districts since not enough data was available from US territories.
+We begin cleaning the data set by removing all redundant variables, footnotes, confidence intervals, and sample sizes for each survey. Furthermore, we see that there is no difference between the start and the end year of the survey, so we remove the end year. Finally, we filter the data set to surveys that include our question of interest: the proportion of adults who engage in muscle-strengthening activities on two or more days a week. As well, we narrow our focus to only US States and Districts since not enough data was available from US territories.
 
 After we cleaned and filtered our data, we are left with four variables.
 
 |Variable Name| Description|
 |-------------|------------|
-|Data_Value| The proportion of adults that satisfy CDC guidelines on muscle-strengthening exercise|
+|Data_Value| The proportion of adults that satisfy CDC guidelines on muscle-strengthening activity|
 |YearStart| The year the survey was conducted |
 | LocationDesc | Names of the 50 US States and the District of Columbia |
-|Age.years. | Groups ages into 6 categories (18-24),(25-34),(35-44),(45-54),(55-64),(65+) |
+|Age.years. | Age grouped into 6 categories: (18-24),(25-34),(35-44),(45-54),(55-64),(65+) |
 
 Where we are trying to predict Data_Value using year, State/District, and age.
 
@@ -52,7 +52,7 @@ Before we begin our exploratory analysis, we introduce the data point (YearStart
 #### Data Distribution
 ![](https://res.cloudinary.com/kevinhe/image/upload/v1607295476/STAT%20350%20Project/distribution_aoi6bn.png)
 
-We start by analyzing the distribution of each one of these variables. From the above bar charts, it is clear that the surveys are evenly distributed throughout the years, State/District, and age, except for the year `2011`, the State of `Alabama`, and the age grouping `18 - 24` as they all have one additional count due to the newly introduced data point. As well, when looking at the density of the proportion of adults that satisfy CDC recommendations for muscle-strengthening activities, it has a large peak that is slightly above 25, and a smaller spike around 43, and is generally right-skewed, potentially suggesting a bimodal distribution.
+We start by analyzing the distribution of each variable left after cleaning the data. From the above bar charts, it is clear that the surveys are evenly distributed throughout the years, State/District, and age, except for the year `2011`, the State of `Alabama`, and the age grouping `18 - 24` as they all have one additional count due to the newly introduced data point. As well, when looking at the density of the proportion of adults that satisfy CDC recommendations for muscle-strengthening activities, it is generally right-skewed and has a large peak that is slightly above 25 and a smaller spike around 43, potentially suggesting a bimodal distribution.
 
 #### Exploratory Analysis
 We now investigate the relationship between each explanatory variable with the response variable.
@@ -60,32 +60,32 @@ We now investigate the relationship between each explanatory variable with the r
 ![](https://res.cloudinary.com/kevinhe/image/upload/v1607295753/STAT%20350%20Project/exploratory_analysis_b8tov0.png)
 
 
-We start by exploring the change in the proportion of adults that satisfy CDC guidelines for muscle strengthening activity throughout the years of the study. Each year has a similar IQR with the distribution slightly increasing as the years advance, which implies a linear relationship. The new point is an extreme outlier for the 2011 boxplot.
+We start by exploring the change in the proportion of adults that satisfy CDC guidelines for muscle-strengthening activity throughout the years of the study. Each year has a similar IQR with the distribution slightly increasing as the years advance, which implies a linear relationship. The new point is an extreme outlier for the 2011 boxplot.
 
-When we compare the age groups to the proportion of adults that satisfy CDC guidelines for muscle strengthening activity the relationship becomes clear. As age increases, we see a negative linear relationship showing that younger adults are more likely to work out in comparison to older adults/seniors. An interesting observation with this boxplot is that the majority of outlier points have a very low proportion value, suggesting that there are States/Districts where very few adults are getting the muscle-strengthening exercise that they need.
+When we compare the age groups to the proportion of adults that satisfy CDC guidelines for muscle-strengthening activity, the relationship becomes clear. We see a negative linear relationship showing that younger adults are more likely to engage in muscle-strengthening activities in comparison to older adults/seniors. An interesting observation with this boxplot is that the majority of outlier points have a very low proportion value, suggesting that there are States/Districts where very few adults are getting the muscle-strengthening activity that they need.
 
-We compare to see if there is a difference in the proportion by State. This boxplot is arranged by increasing medians and there is clear evidence that the proportions are different by State, as the IQR for West Virginia and Colorado has no overlapping values. West Virginia has the lowest median proportion being just under 20, while Colorado has the highest median value over 30. To visualize this clearer, we have also produced a heat map of the proportion by State/District below.
+We then compare to see if there is a difference in proportion by State. This boxplot is arranged by increasing medians and there is clear evidence that the proportions are different by State, as the IQR for West Virginia and Colorado has no overlapping values. West Virginia has the lowest median proportion being just under 20, while Colorado has the highest median value being over 30. To visualize this clearer, we have also produced a heat map of the proportion by State/District below.
 
-![](https://res.cloudinary.com/kevinhe/image/upload/v1607295876/STAT%20350%20Project/heatmap_fqcbbg.png)
+![](https://res.cloudinary.com/kevinhe/image/upload/v1607311266/STAT%20350%20Project/heatmap_ty7bkv.png)
 
 ![](https://res.cloudinary.com/kevinhe/image/upload/v1607296017/STAT%20350%20Project/pairs_gu3gou.png)
 
-Lastly, we look at the pairs plot to check for relationships between each variable. When looking at the layout between explanatory variables there isn't a linear relationship as the data appears to be uniform. When comparing each explanatory variable to Data_Value, we see a clear linear relationship with Age.years. and a slight linear relationship with YearStart. The pairs plot of LocationDesc is harder to interpret, but the data primarily looks randomly distributed.
+Lastly, we look at the pairs plot to check for relationships between each variable. When looking at plots between explanatory variables, there is not a linear relationship as the data appears to be uniform. When comparing each explanatory variable to Data_Value, we see a clear linear relationship with Age.years. and a slight linear relationship with YearStart. The pairs plot of LocationDesc is harder to interpret, but the data primarily looks randomly distributed.
 
 ## Methods
 
-Before we build the regression models, we first split the data into a 80/20 train/test split for model testing and training.
+Before we build our regression models, we first split the data into a 80/20 train/test split for model training and testing.
 
 #### Hypothesis Testing and Model Comparison
 
-We want to know if the slopes of the regression line depend on the different factor levels for the age groups and the State/District. We train a linear regression model with no interaction terms on the training data, as well as create models with interaction terms on age groups, State/District, and both age groups and State/District also using the training data. The result of our hypothesis test suggests that the slopes are different for age groups and State/District using alpha = 0.05.
+We want to know if the slopes of the regression line depend on the different factor levels for the age groups and the State/District. We train a linear regression model with no interaction terms on the training data, as well as create models with interaction terms on age groups, State/District, and both age groups and State/District also using the training data. The result of our hypothesis test suggests that the slopes are dependent on both the different levels of age groups and State/District at alpha = 0.05. The models used for these tests and the p-value for each test is reported below.
 
 |Model| Description|
 |-----|------------|
 |Linear Regression | Data_Value ~ YearStart + Age.years + Location Desc |
 |Linear Regression with Interaction Term `YearStart:Age.years` | Data_Value ~ YearStart + Age.years + Location Desc + YearStart:Age.years |
 |Linear Regression with Interaction Term `YearStart:LocationDesc` | Data_Value ~ YearStart + Age.years + Location Desc + YearStart:LocationDesc |
-|Linear Regression with Both Interaction Terms on `YearStart:LocationDesc` and `YearStart:Age.years` | Data_Value ~ YearStart + Age.years + Location Desc + YearStart:Age.years + YearStart:LocationDesc|
+|Linear Regression with Both Interaction Terms  `YearStart:LocationDesc` and `YearStart:Age.years` | Data_Value ~ YearStart + Age.years + Location Desc + YearStart:Age.years + YearStart:LocationDesc|
 
 | Anova Test | P-Value|
 |------------|--------|
@@ -95,7 +95,7 @@ We want to know if the slopes of the regression line depend on the different fac
 
 
 
-Since we are primarily concerned with the predictive power of each model and since adding interaction terms affects the bias-variance tradeoff of the model we compare these models using AIC values.
+Due to the fact that we are primarily concerned with the predictive power of each model and since adding interaction terms affects the bias-variance tradeoff, we compare these models using AIC values.
 
 |Model| AIC |
 |-----|-----|
@@ -104,7 +104,7 @@ Since we are primarily concerned with the predictive power of each model and sin
 |Linear Regression - LocationDesc interaction | 3528.803|
 |Linear Regression - Age group and LocationDesc interaction | 3523.032|
 
-Here we see that despite the slopes being different for each level of age group and State/District the model with only the interaction term on age performs the best according to the AIC value with the model with no interaction terms following closely behind.
+Here we see that despite the slopes being different for each level of age group and State/District, the model with only the interaction term on age performs the best according to the AIC value with the model with no interaction terms following closely behind.
 
 #### Model Building
 
@@ -113,15 +113,15 @@ We now start to build our regression models and start tuning parameters if neces
 Although we have completed hypothesis testing and model selection on the training data to test if interaction terms are necessary, we still use the models that we have rejected. Specifically, we fit the following models using all explanatory variables:
 
 - linear regression
-  - (Data_Value ~ YearStart + Age.years + Location Desc)
+  - Data_Value ~ YearStart + Age.years + Location Desc
 - linear regression with interaction term `YearStart:Age.years`
-  - (Data_Value ~ YearStart + Age.years + Location Desc + YearStart:Age.years)
+  - Data_Value ~ YearStart + Age.years + Location Desc + YearStart:Age.years
 - linear regression with interaction term `YearStart:LocationDesc`
-  - (Data_Value ~ YearStart + Age.years + Location Desc + YearStart:LocationDesc)
+  - Data_Value ~ YearStart + Age.years + Location Desc + YearStart:LocationDesc
 - linear regression with both interaction terms on `YearStart:LocationDesc` and `YearStart:Age.years`
-  - (Data_Value ~ YearStart + Age.years + Location Desc + YearStart:Age.years + YearStart:LocationDesc)
+  - Data_Value ~ YearStart + Age.years + Location Desc + YearStart:Age.years + YearStart:LocationDesc
 
-For each one of the models listed above, we also perform stepwise variable selection with parameter tuning from using 10-Fold Cross Validation for a total of 8 models.
+For each one of the models listed above, we also perform stepwise variable selection with parameter tuning from using 10-fold cross validation for a total of 8 models.
 
 ## Results
 
@@ -131,9 +131,9 @@ With the R^2 and the root-MSPE saved from the 10-fold cross-validation results, 
 
 ![](https://res.cloudinary.com/kevinhe/image/upload/v1607215843/STAT%20350%20Project/MSPE_fiwkkl.png)
 
-From the left boxplot containing root-MSPE values, it is evident that none of the stepwise regression models performed as well as the linear regression models as they have the largest root-MSPE values. When comparing the linear regression models, the model with no interaction terms performs the best as it has one of the lowest median root-MSPE values and a low boxplot range. The model with interaction on age follows closely behind, but it has the highest median root-MSPE values out of the linear regression models.
+From the left boxplot containing root-MSPE values, it is evident that none of the stepwise regression models performed as well as the linear regression models as they have the largest root-MSPE values. When comparing the linear regression models, the model with no interaction terms performs the best as it has one of the lowest median root-MSPE values and a low boxplot range. The model with the interaction on age follows closely behind, but it has the highest median root-MSPE value out of the linear regression models.
 
-We also produced boxplots for the R^2 value in each fold of all models. The two best models are the linear regression model with no interaction terms and the linear regression model with interaction on age groups, they both have around the same median R^2 value and IQR, but we select the model without interaction terms as it does not have long boxplot whiskers and it is a simpler model.
+We also produced boxplots for the R^2 value for each fold of all models. The two best models are the linear regression model with no interaction terms and the linear regression model with interaction on age groups. They both have around the same median R^2 value and IQR, but we select the model without interaction terms as it does not have long boxplot whiskers and it is a simpler model.
 
 
 Finally, we see how each model performs on new data, specifically our test data set. We get the following results:
@@ -149,9 +149,9 @@ Finally, we see how each model performs on new data, specifically our test data 
 |Stepwise Regression - LocationDesc interaction |  27.18744  |
 |Stepwise Regression - Age group and LocationDesc interaction |27.18744 |
 
-As expected from the cross-validation results, the linear regression model with no interaction terms performs the best with the linear regression model with a interaction on age being close behind. This result contradicts the conclusion of our hypothesis tests to see if the slopes depended on the different levels of LocationDesc and Age.years. , but is backed up by our original model comparison using AIC as it has one of the top AIC values in comparison to the other models. This discrepancy could be explained by the bias-variance trade-off that we briefly touched on before, as although we have 735 observation in our training data, we also have 51 levels in the LocationDesc variable and 6 levels in the Age.years. variable; so in actuality, when we create interaction terms we have to estimate the coefficients for 306 additional variables, which decreases the bias of the model as we have a more flexible model, but in turn, our variance increases, making our models more variable.
+As expected from the cross-validation results, the linear regression model with no interaction terms performs the best with the linear regression model with a interaction on age being close behind. This result contradicts the conclusion of our hypothesis tests to see if the slopes depended on the different levels of LocationDesc and Age.years. , but is backed up by our original model comparison using AIC, as it has one of the top AIC values in comparison to the other models. This discrepancy could be explained by the bias-variance tradeoff that we briefly touched on before, as although we have 735 observation in our training data, we also have 51 levels in the LocationDesc variable and 6 levels in the Age.years. variable; so in actuality, when we create interaction terms, we have to estimate the coefficients for 306 additional variables, which decreases the bias of the model as we have a more flexible model, but in turn, our variance increases, making our models more variable.
 
-From both cross-validation and the testing data we select the linear regression model with no interaction terms to be our best model. We include a plot of the predicted vs observed value from our final model.
+From both cross-validation and the test data results, we select the linear regression model with no interaction terms to be our best model. We also include a plot of the predicted vs observed value from our final model.
 
 ![](https://res.cloudinary.com/kevinhe/image/upload/v1607216237/STAT%20350%20Project/predicted_aaijtt.png)
 
@@ -166,20 +166,20 @@ We first see if there is a linear relationship between at least one of the expla
 We now perform analysis on the residuals.
 ![](https://res.cloudinary.com/kevinhe/image/upload/v1607216516/STAT%20350%20Project/residuals_aiqgwj.png)
 
- By looking at the Residual vs Fitted plot, all the points are randomly scattered with a mean of 0 and no clear pattern, which suggests that the constant variance assumption is satisfied.
+ By looking at the Residual vs Fitted plot, all the points are randomly scattered with a mean of 0 with no clear pattern, which suggests that the constant variance assumption is satisfied.
 
-The Normal Q-Q plot, for the majority, follows a straight line with few points around the edges of both extremes deviating from the line. From this observation, the normality of the residuals is satisfied.
+The Normal Q-Q plot, for the majority, follows a straight line with very few points around the edges of both extremes deviating from the line. From this observation, the normality of the residuals is satisfied.
 
 For the standardized residuals vs leverage plot, the points for leverage are scattered evenly around the same area with no points having a large leverage. As well, there exists a couple of points with standardized residuals beyond +/- 3, but since they do not have a high leverage point, they are not considered to be influential.
 
 To double check that we do not have any influential points we use both Cook's Distance and diag(H) with standardized residuals, of which no influential points were identified.
 
-Lastly, we use the Variance Inflation Factor to see if there exists an issue with multicollinearity in the model, and since all the values are around 1, we conclude that there is no issues with multicollinearity.
+Lastly, we use the variance inflation factor to see if there exists an issue with multicollinearity in the model, and since all the values are around 1, we conclude that there is no issues with multicollinearity.
 
 ## Conclusion
-  Overall, our final model, the linear regression model with no interaction terms, has an R^2 value of 0.8891376 which is a great performance given the number of variables that were filtered from the data set. Running one last summary on our chosen model we are able to answer the questions posed in the beginning of the analysis. We first see that as the year increases there has been an improvement in the proportion of US adults that satisfies CDC guideline on muscle strengthening activity, although this change is quite marginal with a 0.38% increase per year from 2013 to 2015; this variable also poses as a limitation in our model which will be discussed later on. As well, we can see from the model that younger age groups are more likely to satisfy CDC guidelines on muscle strengthening activity, with about a 3% difference in proportion as age increases. Finally, we are able to conclude that the likelihood of satisfying CDC guidelines on muscle strengthening activities depends on the State/District of residence with states such as Hawaii, Alaska, Virginia, and Colorado having some of the largest increases for the intercept of the model, which is consistent with our exploratory analysis.
+  Overall, our final model, the linear regression model with no interaction terms, has an R^2 value of 0.8891376 which performs great given the number of variables that were filtered from the data set. Running one last summary on our chosen model we are able to answer the questions posed in the beginning of the analysis. We first see that as the year increases there has been an improvement in the proportion of US adults that satisfies CDC guideline on muscle-strengthening activity, although this change is quite marginal with a 0.38% increase per year from 2013 to 2015; this variable also poses as a limitation in our model which will be discussed later on. As well, we can see from the model that younger age groups are more likely to satisfy CDC guidelines on muscle-strengthening activity, with about a 3% decrease in proportion as age increases. Finally, we are able to conclude that the likelihood of satisfying CDC guidelines on muscle-strengthening activities depends on the State/District of residence with states such as Hawaii, Alaska, Virginia, and Colorado has some of the largest increases for the intercept of the model, which is consistent with our exploratory analysis.
 
-  Some of the limitations of the model include having the YearStart as one of the variables in our model as we do not know if the upwards trend will continuously be linear or if the increase will slow down as time goes on, forcing us to extrapolate for predictions outside of the year range 2013 - 2015. Moreover, including 51 levels of State/District and 6 levels of Age groups impacts our model as we have to fit a coefficient for each level which increases model complexity. In future studies, States/District could be grouped into the 9 census regions or into Democratic and Republican controlled States/District to reduce their model complexity and to investigate further questions related to the data.
+  Some of the limitations of this study include having YearStart as one of the variables in our model as we do not know if the upwards trend will continuously be linear or if the increase will slow down as time goes on, forcing us to extrapolate for predictions outside of the year range 2013 - 2015. Moreover, including 51 levels of State/District and 6 levels of Age groups impacts our model as we have to fit a coefficient for each level which increases model complexity. In future studies, States/District could be grouped into the 9 census regions or into Democratic and Republican controlled States/District to reduce their model complexity and to investigate further questions related to the data.
 
 ## References
 - [Physical Activit Recommendations for Different Age Groups - CDC](https://www.cdc.gov/physicalactivity/basics/age-chart.html)

@@ -113,12 +113,11 @@ locbox <- data %>% group_by(LocationDesc) %>% mutate(median_value = median(Data_
 
 # Heatmap of states
 data_temp <- data %>% rename("state" = "LocationDesc")
-plot_usmap(data = data_temp, values = "Data_Value", color = "red", labels = TRUE) + scale_fill_continuous(name = "Proportion", label = scales::comma) + labs( title = "Heatmap of Proportions in for US States/Districts" )
+plot_usmap(data = data_temp, values = "Data_Value", color = "red", labels = TRUE) + scale_fill_continuous(name = "Proportion", label = scales::comma) + labs( title = "Heatmap of Proportions for US States/Districts" )
 
 
 #pairs plot for correlation
 pairs(data, main = "Pairs plot of Explanatory and Response Variables")
-?pairs
 
 ggarrange(yearbox, agebox,
           ggarrange(locbox, ncol = 1),
