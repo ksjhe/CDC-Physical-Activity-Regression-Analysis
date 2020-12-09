@@ -117,7 +117,7 @@ plot_usmap(data = data_temp, values = "Data_Value", color = "red", labels = TRUE
 
 
 #pairs plot for correlation
-pairs(data, main = "Pairs plot of Explanatory and Response Variables")
+pairs(data, main = "Pairs Plot of Explanatory and Response Variables")
 
 ggarrange(yearbox, agebox,
           ggarrange(locbox, ncol = 1),
@@ -283,7 +283,7 @@ mins.r2 <- apply(r2,1,max)
 par(mfrow = c(1,2))
 boxplot(rMSPE, las = 2, main = "root-MSPE from 10-Fold CV", xlab = "model", ylab = "root-MSPE")
 #boxplot(rMSPE/mins.MSPE, las = 2, main = "Relative-root-MSPE from 10-Fold CV",xlab = "model", ylab = "Relative root-MSPE")
-boxplot(r2, las = 2, main = "R2 value from 10-Fold CV", xlab = "model", ylab = "R2")
+boxplot(r2, las = 2, main = "R2 from 10-Fold CV", xlab = "model", ylab = "R2")
 
 
 ## All of the LM models perform decently well
